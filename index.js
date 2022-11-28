@@ -1,21 +1,20 @@
 const sqlite3 = require('sqlite3').verbose();
 const db_file_loc = './db/db1.db'
 
-function open_db() {
- return new sqlite3.Database(db_file_loc, (err) => {
-    if (err) {
-        console.log(`Failed to connect to ${db_file_loc}`);
-    }
-    else {
-        console.log(`Successfully connected to ${db_file_loc}`);
-    }
-})
+function open_db(file_name) {
+    return new sqlite3.Database(file_name, (err) => {
+        if (err) {
+            console.log(`Failed to connect to ${file_name}`);
+        }
+        else {
+            console.log(`Successfully connected to ${file_name}`);
+        }
+    })
 }
 
-function insert(db) {
-    const data = [7, 'DAN', 18, 'MEXICO', 32000]
+function insert_company(db, data) {
     const sql_insert = `INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
-                        VALUES (?, ?, ? ,?, ? );`
+                        VALUES (?, ?, ? ,?, ?);` // [7, 'DAN', 18, 'MEXICO', 32000] == data
     db.run(sql_insert, data, err => {
         if (err) {
             console.log(`ERROR: ${err}`);
@@ -26,10 +25,10 @@ function insert(db) {
     })
 }
 
-function select_all(db) {
+function select(db, query) {
     db.serialize(() => {
-        console.log(`SELECT * FROM COMPANY`)
-        db.each(`SELECT * FROM COMPANY`, (err, row) => {
+        console.log(query)
+        db.each(query, (err, row) => {
             if (err) {
                 console.log(`ERROR: ${err}`);
             }
@@ -38,23 +37,6 @@ function select_all(db) {
             }
         })
     })
-}
-
-function select_over_30k(db) {
-    
-// create another query which selects only salary larger than 30,000
-db.serialize(() => {
-    console.log(`==========================================================`);
-    console.log(`SELECT * FROM COMPANY WHERE SALARY > 30,000`)
-    db.each(`SELECT * FROM COMPANY WHERE SALARY > 30000`, (err, row) => {
-        if (err) {
-            console.log(`ERROR: ${err}`);
-        }
-        else {
-            console.log(row)
-        }
-    })
-})
 }
 
 function close_db(db) {
@@ -68,10 +50,23 @@ function close_db(db) {
     })
 }
 
-const db = open_db()
-select_all(db)
-setTimeout(() => select_over_30k(db), 500)
-setTimeout(() => close_db(db), 800);
+function update_salary_by_id(db, id, new_salary) {
+}
+
+function delete_company_by_id(db, id) {
+}
+
+const db = open_db(db_file_loc)
+
+//setTimeout(() => insert(db, [7, 'DAN', 18, 'MEXICO', 32000]), 100)
+//setTimeout(() => insert(db, [8, 'SUZI', 22, 'SAN PAULO', 47775]), 100)
+//setTimeout(() => insert(db, [9, 'TORRES2', 24, 'SPAIN', 89776]), 100)
+//setTimeout(() => insert(db, [10, 'TORRES3', 24, 'SPAIN', 89776]), 100)
+//setTimeout(() => insert(db, [11, 'TORRES4', 24, 'SPAIN', 89776]), 100)
+setTimeout(() => select(db, `SELECT * FROM COMPANY`), 500)
+//setTimeout(() => console.log('============================================'), 800);
+//setTimeout(() => select(db, `SELECT * FROM COMPANY WHERE SALARY > 30000`), 1100)
+setTimeout(() => close_db(db), 1400);
 
 //-- INSERT
 //-- UPDATE (db.run)
