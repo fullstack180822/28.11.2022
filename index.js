@@ -10,6 +10,8 @@ const db = new sqlite3.Database(db_file_loc, (err) => {
     }
 })
 
+// create another query which selects only salary larger than 30,000
+
 db.serialize(() => {
     db.each(`SELECT * FROM COMPANY`, (err, row) => {
         if (err) {
