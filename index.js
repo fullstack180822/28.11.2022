@@ -49,8 +49,18 @@ function close_db(db) {
         }
     })
 }
-
 function update_salary_by_id(db, id, new_salary) {
+    const sql_update = `UPDATE COMPANY 
+                        SET SALARY = ?
+                        WHERE id = ?`
+    db.run(sql_update, [new_salary, id], err => {
+        if (err) {
+            console.log(`ERROR: ${err}`);
+        }
+        else {
+            console.log(`Salary updated to ${new_salary}`);
+        }
+    })
 }
 
 function delete_company_by_id(db, id) {
@@ -66,7 +76,10 @@ const db = open_db(db_file_loc)
 setTimeout(() => select(db, `SELECT * FROM COMPANY`), 500)
 //setTimeout(() => console.log('============================================'), 800);
 //setTimeout(() => select(db, `SELECT * FROM COMPANY WHERE SALARY > 30000`), 1100)
-setTimeout(() => close_db(db), 1400);
+setTimeout(() => update_salary_by_id(db, 1, 100100), 1400)
+setTimeout(() => close_db(db), 1700);
+
+
 
 //-- INSERT
 //-- UPDATE (db.run)
